@@ -11,9 +11,3 @@ start_handler = CommandHandler('start', start_bot) #Реакция на кома
 
 updater.dispatcher.add_handler(start_handler) #Создание обработчика.
 updater.start_polling() #Запуск бота.
-
-
-#BOT = telebot.TeleBot(config.TOKEN)
-
-#if __name__ == '__main__':
-#    BOT.polling(none_stop=True)
