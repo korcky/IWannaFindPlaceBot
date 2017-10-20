@@ -10,7 +10,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 main_kb = InlineKeyboardMarkup([[InlineKeyboardButton('Геолокация', callback_data='geo'),
                                  InlineKeyboardButton('Станция метро', callback_data='ms')]
                                 ])
-back_kb =InlineKeyboardMarkup([InlineKeyboardButton('Назад', callback_data='back')])
+back_kb =InlineKeyboardMarkup([[InlineKeyboardButton('Назад', callback_data='back')]])
 lines_kb = InlineKeyboardMarkup([[InlineKeyboardButton('Красная', callback_data='red'),
                                   InlineKeyboardButton('Синяя', callback_data='blue')],
                                  [InlineKeyboardButton('Зеленая', callback_data='green'),
@@ -102,7 +102,7 @@ def geolocation(bot, update):
     query = update.callback_query
 
     bot.edit_message_text(text='Мы работаем над этим',
-                          #reply_markup=back_kb, 
+                          reply_markup=back_kb,
                           #- с этой строкой почему-то не работает вывод по геолокации
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
