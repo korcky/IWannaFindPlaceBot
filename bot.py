@@ -97,7 +97,7 @@ violet_kb = InlineKeyboardMarkup([[InlineKeyboardButton('Комендантск�
 
 
 def start(bot, update):
-    update.message.reply_text('Выбери способ поиска:', reply_markup=main_kb)
+    update.message.reply_text('Выберите способ поиска:', reply_markup=main_kb)
 
 
 def geolocation(bot, update):
@@ -157,8 +157,8 @@ def back_to_main(bot, update):
 
 
 def help(bot, update):
-    update.message.reply_text('Нажмите /start, чтобы начать, и наш бот поможет найти лучшие места для отдыха:)')
-
+    update.message.reply_text('Выберите способ поиска, и наш бот поможет найти лучшие места для отдыха:)')
+    update.message.reply_text('Нажмите /start для выхода в меню')
 
 def error(bot, update, error):
     logging.warning('Update {} caused error {}'.format(update, error))
