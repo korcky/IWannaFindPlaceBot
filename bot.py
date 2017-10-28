@@ -17,8 +17,8 @@ def start(bot, update):
 def geolocation(bot, update):
     query = update.callback_query
 
-    bot.edit_message_text(text='Мы работаем над этим',
-                          reply_markup=keyboards.GEO_KB,
+    bot.edit_message_text(text='Выберите радиус:',
+                          reply_markup=keyboards.RADIUS_KB,
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
 

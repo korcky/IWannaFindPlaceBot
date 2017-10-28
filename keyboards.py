@@ -87,4 +87,9 @@ VIOLET_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Комендантск�
                                    InlineKeyboardButton('Международная', callback_data='violetSt12')],
                                   [InlineKeyboardButton('Назад', callback_data='ml')]
                                   ])
+RADIUS_KB = InlineKeyboardMarkup ([[InlineKeyboardButton('500 метров', callback_data='500'),
+                                   InlineKeyboardButton('700 метров', callback_data='700')],
+                                   [InlineKeyboardButton('1000 метров', callback_data='1000')],
+                                   [InlineKeyboardButton('Назад', callback_data='back_to_main')]
+                                   ])
 
