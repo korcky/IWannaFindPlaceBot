@@ -25,6 +25,7 @@ def geolocation(bot, update):
 
 
 def location_handler(bot, update):
+    bot.send_location(update.message.chat_id, location=update.message.location)
     update.message.reply_text(str(update.message.location))
 
 
