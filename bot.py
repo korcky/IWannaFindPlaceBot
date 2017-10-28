@@ -1,13 +1,11 @@
 import logging
 import keyboards
 import config
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, Filters, MessageHandler
 
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
-
 
 
 def start(bot, update):
@@ -21,6 +19,13 @@ def geolocation(bot, update):
                           reply_markup=keyboards.RADIUS_KB,
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
+    # можно перенести на момент после выбора радиуса
+    bot.send_message(query.message.chat_id, text='Где вы?',
+                     reply_markup=keyboards.REQUEST_LOCATION_KB)
+
+
+def location_handler(bot, update):
+    update.message.reply_text(str(update.message.location))
 
 
 def metro_lines(bot, update):
@@ -74,6 +79,7 @@ def help(bot, update):
     update.message.reply_text('Выберите способ поиска, и наш бот поможет найти лучшие места для отдыха:)')
     update.message.reply_text('Нажмите /start, чтобы начать')
 
+
 def error(bot, update, error):
     logging.warning('Update {} caused error {}'.format(update, error))
 
@@ -89,6 +95,7 @@ if __name__ == '__main__':
     dispatcher.add_handler(CallbackQueryHandler(back_to_main, pattern='back_to_main'))
     dispatcher.add_handler(CallbackQueryHandler(which_station, pattern='[(red)(blue)(green)(orange)(violet)]'))
     dispatcher.add_handler(CommandHandler('help', help))
+    dispatcher.add_handler(MessageHandler(Filters.location, location_handler))
     dispatcher.add_error_handler(error)
 
     # Start the Bot

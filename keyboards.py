@@ -1,9 +1,14 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
+
+REQUEST_LOCATION_KB = ReplyKeyboardMarkup([[KeyboardButton('Я здесь', request_location=True)]],
+                                          resize_keyboard=True)
+
 MAIN_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Геолокация', callback_data='geo'),
                                  InlineKeyboardButton('Станция метро', callback_data='ml')]
                                 ])
+
 GEO_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Назад', callback_data='back_to_main')]])
+
 LINES_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Красная', callback_data='red'),
                                   InlineKeyboardButton('Синяя', callback_data='blue')],
                                  [InlineKeyboardButton('Зеленая', callback_data='green'),
@@ -11,6 +16,7 @@ LINES_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Красная', callbac
                                  [InlineKeyboardButton('Фиолетовая', callback_data='violet')],
                                  [InlineKeyboardButton('Назад', callback_data='back_to_main')]
                                  ])
+
 RED_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Девяткино', callback_data='redSt1'),
                                 InlineKeyboardButton('Гражданский проспект', callback_data='redSt2')],
                                [InlineKeyboardButton('Академическая', callback_data='redSt3'),
@@ -32,6 +38,7 @@ RED_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Девяткино', callb
                                [InlineKeyboardButton('Проспект Ветеранов', callback_data='redSt19')],
                                [InlineKeyboardButton('Назад', callback_data='ml')]
                                ])
+
 BLUE_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Парнас', callback_data='blueSt1'),
                                  InlineKeyboardButton('Проспект Просвещения', callback_data='blueSt2')],
                                 [InlineKeyboardButton('Озерки', callback_data='blueSt3'),
@@ -52,6 +59,7 @@ BLUE_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Парнас', callback_d
                                  InlineKeyboardButton('Купчино', callback_data='blueSt18')],
                                 [InlineKeyboardButton('Назад', callback_data='ml')]
                                 ])
+
 GREEN_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Приморская', callback_data='greenSt1'),
                                   InlineKeyboardButton('Василеостровская', callback_data='greenSt2')],
                                  [InlineKeyboardButton('Гостиный двор', callback_data='greenSt3'),
@@ -64,6 +72,7 @@ GREEN_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Приморская', c
                                   InlineKeyboardButton('Рыбацкое', callback_data='greenSt10')],
                                  [InlineKeyboardButton('Назад', callback_data='ml')]
                                  ])
+
 ORANGE_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Спасская', callback_data='orangeSt1'),
                                    InlineKeyboardButton('Достоевская', callback_data='orangeSt2')],
                                   [InlineKeyboardButton('Лиговский проспект', callback_data='orangeSt3'),
@@ -73,6 +82,7 @@ ORANGE_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Спасская', call
                                   [InlineKeyboardButton('Улица Дыбенко', callback_data='orangeSt7')],
                                   [InlineKeyboardButton('Назад', callback_data='ml')]
                                   ])
+
 VIOLET_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Комендантский проспект', callback_data='violetSt1'),
                                    InlineKeyboardButton('Старая Деревня', callback_data='violetSt2')],
                                   [InlineKeyboardButton('Крестовский остров', callback_data='violetSt3'),
@@ -87,9 +97,9 @@ VIOLET_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Комендантск�
                                    InlineKeyboardButton('Международная', callback_data='violetSt12')],
                                   [InlineKeyboardButton('Назад', callback_data='ml')]
                                   ])
-RADIUS_KB = InlineKeyboardMarkup ([[InlineKeyboardButton('500 метров', callback_data='500'),
-                                   InlineKeyboardButton('700 метров', callback_data='700')],
-                                   [InlineKeyboardButton('1000 метров', callback_data='1000')],
-                                   [InlineKeyboardButton('Назад', callback_data='back_to_main')]
-                                   ])
 
+RADIUS_KB = InlineKeyboardMarkup([[InlineKeyboardButton('500 метров', callback_data='500'),
+                                   InlineKeyboardButton('700 метров', callback_data='700')],
+                                  [InlineKeyboardButton('1000 метров', callback_data='1000')],
+                                  [InlineKeyboardButton('Назад', callback_data='back_to_main')]
+                                  ])
