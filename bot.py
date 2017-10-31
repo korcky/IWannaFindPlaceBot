@@ -1,8 +1,9 @@
 import logging
-import keyboards
-import config
+
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, Filters, MessageHandler
 
+import config
+import keyboards
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
