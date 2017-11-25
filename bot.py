@@ -4,6 +4,7 @@ from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, Filters,
 
 import config
 import keyboards
+from find_places import find_places
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
@@ -25,9 +26,21 @@ def geolocation(bot, update):
                      reply_markup=keyboards.REQUEST_LOCATION_KB)
 
 
-def location_handler(bot, update):
-    bot.send_location(update.message.chat_id, location=update.message.location)
-    update.message.reply_text(str(update.message.location))
+#def location_handler(bot, update, chat_data):
+#    bot.send_location(update.message.chat_id, location=update.message.location)
+ #   update.message.reply_text(str(update.message.location))
+
+
+def location_handler(bot, update, chat_data):
+    query = update.callback_query
+    user_location = update.message.location
+    nearest_places = find_places(user_location, query.data)
+    chat_data['nearest_places'] = nearest_places
+
+
+def send_places(bot, update, chat_data):
+    places = chat_data['nearest_places'][:5]
+    update.message.reply_text(places)
 
 
 def metro_lines(bot, update):
@@ -85,7 +98,6 @@ def help(bot, update):
 def error(bot, update, error):
     logging.warning('Update {} caused error {}'.format(update, error))
 
-
 if __name__ == '__main__':
     # Create the Updater and pass it your bot's token.
     updater = Updater(config.TOKEN)
@@ -97,7 +109,8 @@ if __name__ == '__main__':
     dispatcher.add_handler(CallbackQueryHandler(back_to_main, pattern='back_to_main'))
     dispatcher.add_handler(CallbackQueryHandler(which_station, pattern='[(red)(blue)(green)(orange)(violet)]'))
     dispatcher.add_handler(CommandHandler('help', help))
-    dispatcher.add_handler(MessageHandler(Filters.location, location_handler))
+    dispatcher.add_handler(MessageHandler(Filters.location, location_handler, pass_chat_data=True))
+    dispatcher.add_handler(MessageHandler(Filters.all, send_places))
     dispatcher.add_error_handler(error)
 
     # Start the Bot
