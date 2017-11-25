@@ -1,6 +1,6 @@
 import logging
 
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, Filters, MessageHandler
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, Filters, MessageHandler, RegexHandler
 
 import config
 import keyboards
@@ -21,26 +21,20 @@ def geolocation(bot, update):
                           reply_markup=keyboards.RADIUS_KB,
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
-    # можно перенести на момент после выбора радиуса
+
+
+def set_radius(bot, update, chat_data):
+    query = update.callback_query
+    chat_data['radius'] = int(query.data)
     bot.send_message(query.message.chat_id, text='Где вы?',
                      reply_markup=keyboards.REQUEST_LOCATION_KB)
 
 
-#def location_handler(bot, update, chat_data):
-#    bot.send_location(update.message.chat_id, location=update.message.location)
- #   update.message.reply_text(str(update.message.location))
-
-
 def location_handler(bot, update, chat_data):
-    query = update.callback_query
-    user_location = update.message.location
-    nearest_places = find_places(user_location, query.data)
-    chat_data['nearest_places'] = nearest_places
-
-
-def send_places(bot, update, chat_data):
-    places = chat_data['nearest_places'][:5]
-    update.message.reply_text(places)
+    location = update.message.location
+    print(chat_data['radius'], str(location), location)
+    chat_data['nearest_places'] = find_places(location, chat_data['radius'])
+    bot.send_message(chat_id=update.message.chat_id, text=str(chat_data['nearest_places'][0]))
 
 
 def metro_lines(bot, update):
@@ -98,6 +92,7 @@ def help(bot, update):
 def error(bot, update, error):
     logging.warning('Update {} caused error {}'.format(update, error))
 
+
 if __name__ == '__main__':
     # Create the Updater and pass it your bot's token.
     updater = Updater(config.TOKEN)
@@ -108,9 +103,9 @@ if __name__ == '__main__':
     dispatcher.add_handler(CallbackQueryHandler(metro_lines, pattern='ml'))
     dispatcher.add_handler(CallbackQueryHandler(back_to_main, pattern='back_to_main'))
     dispatcher.add_handler(CallbackQueryHandler(which_station, pattern='[(red)(blue)(green)(orange)(violet)]'))
-    dispatcher.add_handler(CommandHandler('help', help))
+    dispatcher.add_handler(CallbackQueryHandler(set_radius, pattern='[(500)(700)(1000)]', pass_chat_data=True))
     dispatcher.add_handler(MessageHandler(Filters.location, location_handler, pass_chat_data=True))
-    dispatcher.add_handler(MessageHandler(Filters.all, send_places))
+    dispatcher.add_handler(CommandHandler('help', help))
     dispatcher.add_error_handler(error)
 
     # Start the Bot
