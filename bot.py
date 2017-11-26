@@ -32,9 +32,9 @@ def set_radius(bot, update, chat_data):
 
 def location_handler(bot, update, chat_data):
     location = update.message.location
-    print(chat_data['radius'], str(location), location)
+   # print(chat_data['radius'], str(location), location)
     chat_data['nearest_places'] = find_places(location, chat_data['radius'])
-    bot.send_message(chat_id=update.message.chat_id, text=str(chat_data['nearest_places'][0]))
+    bot.send_message(chat_id=update.message.chat_id, text=str(chat_data['nearest_places']))
 
 
 def metro_lines(bot, update):
@@ -78,7 +78,7 @@ def which_station(bot, update):
 def back_to_main(bot, update):
     query = update.callback_query
 
-    bot.edit_message_text(text='Выбери способ поиска:',
+    bot.edit_message_text(text='Выберите способ поиска:',
                           reply_markup=keyboards.MAIN_KB,
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
