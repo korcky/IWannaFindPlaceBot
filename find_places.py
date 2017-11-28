@@ -20,20 +20,24 @@ def find_places(user_location, user_radius):
         if 'rating' not in elements:
             elements['rating'] = 0
         if 'opening_hours' not in elements:
-            elements['is_open'] = 'No information.'
+            elements['is_open'] = 'No information'
         elif (elements['opening_hours']['open_now'] == True):
-            elements['is_open'] = 'Is open now.'
+            elements['is_open'] = 'Is open now'
         elif (elements['opening_hours']['open_now'] == False):
-            elements['is_open'] = 'Is closed now.'
+            elements['is_open'] = 'Is closed now'
 
     res = []
     i = 1
     for elements in sorted(result, key=lambda elements: elements['rating'], reverse=True):
         #print(elements['is_open'])
         #res.append(elements['name'] + ' ' + str(elements['rating']) + ' ' + elements['vicinity'])
-        res.append('{}. {}\nRating: {}\nAddress: {}\nOpening hours: {}\n'.format(i, elements['name'], elements['rating'],
-                                                              elements['vicinity'], elements['is_open']))
+        res.append('{}. {}\nRating: {}\nAddress: {}\nOpening hours: {}\n'.format(i, elements['name'],elements['rating'],
+                                                                                             elements['vicinity'], elements['is_open']))
+        res.append('Location: {}, {}\n'.format(elements['geometry']['location']['lat'], elements['geometry']['location']['lng']))
         i = i+1
+        #print(elements['geometry']['location']['lat'], elements['geometry']['location']['lng'])
+        #places.places_photo(client, elements['photos']['photo_reference'], max_width=None, max_height=None)
+        #print(places.place(client, elements['place_id'], language=None))
 
     for i in res:
         print(i)

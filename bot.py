@@ -38,6 +38,7 @@ def location_handler(bot, update, chat_data):
     for each_element in chat_data['nearest_places']:
         #currText = currText + each_element + '\n'
         bot.send_message(chat_id=update.message.chat_id, text=each_element)
+        #bot.send_location(chat_id=update.message.chat_id, )
 
 def near_station(bot, update, chat_data):
     query = update.callback_query
