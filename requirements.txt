@@ -1,1 +1,2 @@
+googlemaps == 2.5.1
 python_telegram_bot == 7.0.1

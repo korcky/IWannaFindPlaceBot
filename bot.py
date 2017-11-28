@@ -1,50 +1,50 @@
 import logging
 
+from telegram import Location
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, Filters, MessageHandler, RegexHandler
 
 import config
 import keyboards
 from find_places import find_places
-from stations_geo import coordinats
+from stations_geo import SUBWAY_STATIONS
+
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
+TEXT = """
+*{}.* `{}`
+*Rating:* `{}`
+*Address:* `{}`
+*Opening hours:* `{}`
+"""
 
-def start(bot, update):
-    update.message.reply_text('Выберите способ поиска:', reply_markup=keyboards.MAIN_KB)
+
+def place_wrapper(index, place):
+    text = TEXT.format(index + 1, place['name'], place['rating'], place['vicinity'], place['is_open'])
+    location = Location(float(place['geometry']['location']['lat']), float(place['geometry']['location']['lng']))
+    return text, location
+
+
+def start(bot, update, chat_data):
+    chat_data.clear()
+    update.message.reply_text('Здравствуйте', reply_markup=keyboards.REMOVE_KB)
+    update.message.reply_text('Выберите тип места:', reply_markup=keyboards.PLACE_KB)
+
+
+def place_type(bot, update, chat_data):
+    query = update.callback_query
+    chat_data['type'] = query.data
+    bot.edit_message_text(chat_id=query.message.chat_id, message_id=query.message.message_id,
+                          text='Выберите способ поиска:', reply_markup=keyboards.MAIN_KB)
 
 
 def geolocation(bot, update):
     query = update.callback_query
-
     bot.edit_message_text(text='Выберите радиус:',
                           reply_markup=keyboards.RADIUS_KB,
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
 
-
-def set_radius(bot, update, chat_data):
-    query = update.callback_query
-    chat_data['radius'] = int(query.data)
-    bot.send_message(query.message.chat_id, text='Где вы?',
-                     reply_markup=keyboards.REQUEST_LOCATION_KB)
-
-
-def location_handler(bot, update, chat_data):
-    location = update.message.location
-   # print(chat_data['radius'], str(location), location)
-    chat_data['nearest_places'] = find_places(location, chat_data['radius'])
-    #currText=""
-    for each_element in chat_data['nearest_places']:
-        #currText = currText + each_element + '\n'
-        bot.send_message(chat_id=update.message.chat_id, text=each_element)
-        #bot.send_location(chat_id=update.message.chat_id, )
-
-def near_station(bot, update, chat_data):
-    query = update.callback_query
-    chat_data['nearest_places'] = find_places(coordinats[query.data], 1000)
-    for each_element in chat_data['nearest_places']:
-        bot.send_message(chat_id=query.message.chat_id, text=each_element)
 
 def metro_lines(bot, update):
     query = update.callback_query
@@ -84,6 +84,49 @@ def which_station(bot, update):
                               message_id=query.message.message_id)
 
 
+def choose_station(bot, update, chat_data):
+    query = update.callback_query
+    chat_data['location'] = SUBWAY_STATIONS[query.data]
+    bot.edit_message_text(text='Выберите радиус:',
+                          reply_markup=keyboards.RADIUS_KB,
+                          chat_id=query.message.chat_id,
+                          message_id=query.message.message_id)
+
+
+def set_radius(bot, update, chat_data):
+    query = update.callback_query
+    chat_data['radius'] = int(query.data)
+    if 'location' not in chat_data:
+        bot.send_message(query.message.chat_id, text='Где вы?',
+                         reply_markup=keyboards.REQUEST_LOCATION_KB)
+    else:
+        chat_data['nearest_places'] = find_places(chat_data.pop('location'), chat_data['radius'], chat_data['type'])
+        chat_data['index'] = 0
+        send_place(bot, update, chat_data, query)
+
+
+def location_handler(bot, update, chat_data):
+    location = update.message.location
+    chat_data['nearest_places'] = find_places(location, chat_data['radius'], chat_data['type'])
+    chat_data['index'] = 0
+    send_place(bot, update, chat_data)
+
+
+def send_place(bot, update, chat_data, query=None):
+    if query:
+        chat_id = query.message.chat_id
+    else:
+        chat_id = update.message.chat_id
+    if chat_data['index'] == len(chat_data['nearest_places']):
+        bot.send_message(chat_id=chat_id, text='Места закончились', reply_markup=keyboards.START_KB)
+    text, location = place_wrapper(chat_data['index'], chat_data['nearest_places'][chat_data['index']])
+    bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboards.NEXT_KB, parse_mode='Markdown')
+    bot.send_location(chat_id=chat_id, location=location)
+    chat_data['index'] += 1
+    if chat_data['index'] == len(chat_data['nearest_places']):
+        bot.send_message(chat_id=chat_id, text='Места закончились', reply_markup=keyboards.START_KB)
+
+
 def back_to_main(bot, update):
     query = update.callback_query
 
@@ -103,24 +146,22 @@ def error(bot, update, error):
 
 
 if __name__ == '__main__':
-    # Create the Updater and pass it your bot's token.
     updater = Updater(config.TOKEN)
     dispatcher = updater.dispatcher
 
-    dispatcher.add_handler(CommandHandler('start', start))
+    dispatcher.add_handler(CommandHandler('start', start, pass_chat_data=True))
+    dispatcher.add_handler(CallbackQueryHandler(place_type, pattern='[(bar)(restaurant)]', pass_chat_data=True))
     dispatcher.add_handler(CallbackQueryHandler(geolocation, pattern='geo'))
     dispatcher.add_handler(CallbackQueryHandler(metro_lines, pattern='ml'))
     dispatcher.add_handler(CallbackQueryHandler(back_to_main, pattern='back_to_main'))
     dispatcher.add_handler(CallbackQueryHandler(which_station, pattern='[(red)(blue)(green)(orange)(violet)]'))
     dispatcher.add_handler(CallbackQueryHandler(set_radius, pattern='[(500)(700)(1000)]', pass_chat_data=True))
-    dispatcher.add_handler(CallbackQueryHandler(near_station, pattern='St', pass_chat_data=True))
+    dispatcher.add_handler(CallbackQueryHandler(choose_station, pattern='St', pass_chat_data=True))
     dispatcher.add_handler(MessageHandler(Filters.location, location_handler, pass_chat_data=True))
+    dispatcher.add_handler(RegexHandler('^(Следующий результат)$', send_place, pass_chat_data=True))
     dispatcher.add_handler(CommandHandler('help', help))
     dispatcher.add_error_handler(error)
 
-    # Start the Bot
     updater.start_polling()
 
-    # Run the bot until the user presses Ctrl-C or the process receives SIGINT,
-    # SIGTERM or SIGABRT
     updater.idle()

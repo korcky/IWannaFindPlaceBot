@@ -1,47 +1,27 @@
-from googlemaps import places, geolocation, convert, Client
-from telegram import  InlineQueryResultPhoto, Location
+from googlemaps import places, Client
+from telegram import Location
 
 import config
 
 client = Client(key=config.API_KEY)
 
 
-def find_places(user_location, user_radius):
+def find_places(user_location, user_radius, place_type):
     if type(user_location) == Location:
         location = (user_location['latitude'], user_location['longitude'])
     else:
         location = user_location
-    result = places.places_nearby(client, location=location, radius=user_radius, type='bar') #keyword='cruise')
-    #opening_hours = result['opening hours']
-    #open_now = opening_hours['open now']
 
-    result = result['results']
-    for elements in result:
-        if 'rating' not in elements:
-            elements['rating'] = 0
-        if 'opening_hours' not in elements:
-            elements['is_open'] = 'No information'
-        elif (elements['opening_hours']['open_now'] == True):
-            elements['is_open'] = 'Is open now'
-        elif (elements['opening_hours']['open_now'] == False):
-            elements['is_open'] = 'Is closed now'
+    result = places.places_nearby(client, location=location,
+                                  radius=user_radius, type=place_type, language='ru')['results']
+    for place in result:
+        if 'rating' not in place:
+            place['rating'] = 0
+        if 'opening_hours' not in place:
+            place['is_open'] = 'No information'
+        elif place['opening_hours']['open_now']:
+            place['is_open'] = 'Is open now'
+        else:
+            place['is_open'] = 'Is closed now'
 
-    res = []
-    i = 1
-    for elements in sorted(result, key=lambda elements: elements['rating'], reverse=True):
-        #print(elements['is_open'])
-        #res.append(elements['name'] + ' ' + str(elements['rating']) + ' ' + elements['vicinity'])
-        res.append('{}. {}\nRating: {}\nAddress: {}\nOpening hours: {}\n'.format(i, elements['name'],elements['rating'],
-                                                                                             elements['vicinity'], elements['is_open']))
-        res.append('Location: {}, {}\n'.format(elements['geometry']['location']['lat'], elements['geometry']['location']['lng']))
-        i = i+1
-        #print(elements['geometry']['location']['lat'], elements['geometry']['location']['lng'])
-        #places.places_photo(client, elements['photos']['photo_reference'], max_width=None, max_height=None)
-        #print(places.place(client, elements['place_id'], language=None))
-
-    for i in res:
-        print(i)
-
-    return res
-#res = find_places(client)
-
+    return sorted(result, key=lambda item: item['rating'], reverse=True)
