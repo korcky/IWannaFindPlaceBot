@@ -67,11 +67,11 @@ GREEN_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Приморская', c
 ORANGE_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Спасская', callback_data='StOrange1'),
                                    InlineKeyboardButton('Достоевская', callback_data='StOrange2')],
                                   [InlineKeyboardButton('Лиговский проспект', callback_data='StOrange3'),
-				[InlineKeyboardButton('Площадь А.Невского', callback_data='StOrange4'),
-                                   InlineKeyboardButton('Новочеркасская', callback_data='StOrange5')],
-                                  [InlineKeyboardButton('Ладожская', callback_data='StOrange6'),
-                                   InlineKeyboardButton('Проспект Большевиков', callback_data='StOrange7')],
-                                  [InlineKeyboardButton('Улица Дыбенко', callback_data='StOrange8')],
+				InlineKeyboardButton('Площадь А.Невского', callback_data='StOrange4')],
+                                   [InlineKeyboardButton('Новочеркасская', callback_data='StOrange5'),
+                                  InlineKeyboardButton('Ладожская', callback_data='StOrange6')],
+                                   [InlineKeyboardButton('Проспект Большевиков', callback_data='StOrange7'),
+                                  InlineKeyboardButton('Улица Дыбенко', callback_data='StOrange8')],
                                   [InlineKeyboardButton('Назад', callback_data='ml')]
                                   ])
 VIOLET_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Комендантский проспект', callback_data='StViolet1'),
