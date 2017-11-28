@@ -5,7 +5,7 @@ from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, Filters,
 import config
 import keyboards
 from find_places import find_places
-
+from stations_geo import coordinats
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
@@ -39,6 +39,11 @@ def location_handler(bot, update, chat_data):
         #currText = currText + each_element + '\n'
         bot.send_message(chat_id=update.message.chat_id, text=each_element)
 
+def near_station(bot, update, chat_data):
+    query = update.callback_query
+    chat_data['nearest_places'] = find_places(coordinats[query.data], 1000)
+    for each_element in chat_data['nearest_places']:
+        bot.send_message(chat_id=query.message.chat_id, text=each_element)
 
 def metro_lines(bot, update):
     query = update.callback_query
@@ -107,6 +112,7 @@ if __name__ == '__main__':
     dispatcher.add_handler(CallbackQueryHandler(back_to_main, pattern='back_to_main'))
     dispatcher.add_handler(CallbackQueryHandler(which_station, pattern='[(red)(blue)(green)(orange)(violet)]'))
     dispatcher.add_handler(CallbackQueryHandler(set_radius, pattern='[(500)(700)(1000)]', pass_chat_data=True))
+    dispatcher.add_handler(CallbackQueryHandler(near_station, pattern='St', pass_chat_data=True))
     dispatcher.add_handler(MessageHandler(Filters.location, location_handler, pass_chat_data=True))
     dispatcher.add_handler(CommandHandler('help', help))
     dispatcher.add_error_handler(error)
