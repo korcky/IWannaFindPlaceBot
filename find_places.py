@@ -1,5 +1,5 @@
 from googlemaps import places, geolocation, convert, Client
-from telegram import  InlineQueryResultPhoto
+from telegram import  InlineQueryResultPhoto, Location
 
 import config
 
@@ -7,7 +7,7 @@ client = Client(key=config.API_KEY)
 
 
 def find_places(user_location, user_radius):
-    if type(user_location) == dict:
+    if type(user_location) == Location:
         location = (user_location['latitude'], user_location['longitude'])
     else:
         location = user_location
