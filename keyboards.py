@@ -1,5 +1,6 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
+REQUEST_LOCATION_KB = ReplyKeyboardMarkup([[KeyboardButton('Я здесь', request_location=True)]],
+                                         resize_keyboard=True)
 MAIN_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Геолокация', callback_data='geo'),
                                  InlineKeyboardButton('Станция метро', callback_data='ml')]
                                 ])
