@@ -1,14 +1,9 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
-
-REQUEST_LOCATION_KB = ReplyKeyboardMarkup([[KeyboardButton('Я здесь', request_location=True)]],
-                                          resize_keyboard=True)
-
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 MAIN_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Геолокация', callback_data='geo'),
                                  InlineKeyboardButton('Станция метро', callback_data='ml')]
                                 ])
-
 GEO_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Назад', callback_data='back_to_main')]])
-
 LINES_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Красная', callback_data='red'),
                                   InlineKeyboardButton('Синяя', callback_data='blue')],
                                  [InlineKeyboardButton('Зеленая', callback_data='green'),
@@ -16,90 +11,86 @@ LINES_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Красная', callbac
                                  [InlineKeyboardButton('Фиолетовая', callback_data='violet')],
                                  [InlineKeyboardButton('Назад', callback_data='back_to_main')]
                                  ])
-
-RED_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Девяткино', callback_data='redSt1'),
-                                InlineKeyboardButton('Гражданский проспект', callback_data='redSt2')],
-                               [InlineKeyboardButton('Академическая', callback_data='redSt3'),
-                                InlineKeyboardButton('Политехническая', callback_data='redSt4')],
-                               [InlineKeyboardButton('Площадь мужества', callback_data='redSt5'),
-                                InlineKeyboardButton('Лесная', callback_data='redSt6')],
-                               [InlineKeyboardButton('Выборгская', callback_data='redSt7'),
-                                InlineKeyboardButton('Площадь Ленина', callback_data='redSt8')],
-                               [InlineKeyboardButton('Чернышевская', callback_data='redSt9'),
-                                InlineKeyboardButton('Площадь восстания', callback_data='redSt10')],
-                               [InlineKeyboardButton('Владимирская', callback_data='redSt11'),
-                                InlineKeyboardButton('Пушкинская', callback_data='redSt12')],
-                               [InlineKeyboardButton('Технологический институт', callback_data='redSt13'),
-                                InlineKeyboardButton('Балтийская', callback_data='redSt14')],
-                               [InlineKeyboardButton('Нарвская', callback_data='redSt15'),
-                                InlineKeyboardButton('Кировский завод', callback_data='redSt16')],
-                               [InlineKeyboardButton('Автово', callback_data='redSt17'),
-                                InlineKeyboardButton('Ленинский проспект', callback_data='redSt18')],
-                               [InlineKeyboardButton('Проспект Ветеранов', callback_data='redSt19')],
+RED_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Девяткино', callback_data='StRed1'),
+                                InlineKeyboardButton('Гражданский проспект', callback_data='StRed2')],
+                               [InlineKeyboardButton('Академическая', callback_data='StRed3'),
+                                InlineKeyboardButton('Политехническая', callback_data='StRed4')],
+                               [InlineKeyboardButton('Площадь мужества', callback_data='StRed5'),
+                                InlineKeyboardButton('Лесная', callback_data='StRed6')],
+                               [InlineKeyboardButton('Выборгская', callback_data='StRed7'),
+                                InlineKeyboardButton('Площадь Ленина', callback_data='StRed8')],
+                               [InlineKeyboardButton('Чернышевская', callback_data='StRed9'),
+                                InlineKeyboardButton('Площадь восстания', callback_data='StRed10')],
+                               [InlineKeyboardButton('Владимирская', callback_data='StRed11'),
+                                InlineKeyboardButton('Пушкинская', callback_data='StRed12')],
+                               [InlineKeyboardButton('Технологический институт', callback_data='StRed13'),
+                                InlineKeyboardButton('Балтийская', callback_data='StRed14')],
+                               [InlineKeyboardButton('Нарвская', callback_data='StRed15'),
+                                InlineKeyboardButton('Кировский завод', callback_data='StRed16')],
+                               [InlineKeyboardButton('Автово', callback_data='StRed17'),
+                                InlineKeyboardButton('Ленинский проспект', callback_data='StRed18')],
+                               [InlineKeyboardButton('Проспект Ветеранов', callback_data='StRed19')],
                                [InlineKeyboardButton('Назад', callback_data='ml')]
                                ])
-
-BLUE_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Парнас', callback_data='blueSt1'),
-                                 InlineKeyboardButton('Проспект Просвещения', callback_data='blueSt2')],
-                                [InlineKeyboardButton('Озерки', callback_data='blueSt3'),
-                                 InlineKeyboardButton('Удельная', callback_data='blueSt4')],
-                                [InlineKeyboardButton('Пионерская', callback_data='blueSt5'),
-                                 InlineKeyboardButton('Черная речка', callback_data='blueSt6')],
-                                [InlineKeyboardButton('Петроградская', callback_data='blueSt7'),
-                                 InlineKeyboardButton('Горьковская', callback_data='blueSt8')],
-                                [InlineKeyboardButton('Невский проспект', callback_data='blueSt9'),
-                                 InlineKeyboardButton('Сенная площадь', callback_data='blueSt10')],
-                                [InlineKeyboardButton('Технологический институт', callback_data='blueSt11'),
-                                 InlineKeyboardButton('Фрунзенская', callback_data='blueSt12')],
-                                [InlineKeyboardButton('Московские ворота', callback_data='blueSt13'),
-                                 InlineKeyboardButton('Электросила', callback_data='blueSt14')],
-                                [InlineKeyboardButton('Парк Победы', callback_data='blueSt15'),
-                                 InlineKeyboardButton('Московская', callback_data='blueSt16')],
-                                [InlineKeyboardButton('Звездная', callback_data='blueSt17'),
-                                 InlineKeyboardButton('Купчино', callback_data='blueSt18')],
+BLUE_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Парнас', callback_data='StBlue1'),
+                                 InlineKeyboardButton('Проспект Просвещения', callback_data='StBlue2')],
+                                [InlineKeyboardButton('Озерки', callback_data='StBlue3'),
+                                 InlineKeyboardButton('Удельная', callback_data='StBlue4')],
+                                [InlineKeyboardButton('Пионерская', callback_data='StBlue5'),
+                                 InlineKeyboardButton('Черная речка', callback_data='StBlue6')],
+                                [InlineKeyboardButton('Петроградская', callback_data='StBlue7'),
+                                 InlineKeyboardButton('Горьковская', callback_data='StBlue8')],
+                                [InlineKeyboardButton('Невский проспект', callback_data='StBlue9'),
+                                 InlineKeyboardButton('Сенная площадь', callback_data='StBlue10')],
+                                [InlineKeyboardButton('Технологический институт', callback_data='StBlue11'),
+                                 InlineKeyboardButton('Фрунзенская', callback_data='StBlue12')],
+                                [InlineKeyboardButton('Московские ворота', callback_data='StBlue13'),
+                                 InlineKeyboardButton('Электросила', callback_data='StBlue14')],
+                                [InlineKeyboardButton('Парк Победы', callback_data='StBlue15'),
+                                 InlineKeyboardButton('Московская', callback_data='StBlue16')],
+                                [InlineKeyboardButton('Звездная', callback_data='StBlue17'),
+                                 InlineKeyboardButton('Купчино', callback_data='StBlue18')],
                                 [InlineKeyboardButton('Назад', callback_data='ml')]
                                 ])
-
-GREEN_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Приморская', callback_data='greenSt1'),
-                                  InlineKeyboardButton('Василеостровская', callback_data='greenSt2')],
-                                 [InlineKeyboardButton('Гостиный двор', callback_data='greenSt3'),
-                                  InlineKeyboardButton('Маяковская', callback_data='greenSt4')],
-                                 [InlineKeyboardButton('Площадь А.Невского', callback_data='greenSt5'),
-                                  InlineKeyboardButton('Елизаровская', callback_data='greenSt6')],
-                                 [InlineKeyboardButton('Ломоносовская', callback_data='greenSt7'),
-                                  InlineKeyboardButton('Пролетарская', callback_data='greenSt8')],
-                                 [InlineKeyboardButton('Обухово', callback_data='greenSt9'),
-                                  InlineKeyboardButton('Рыбацкое', callback_data='greenSt10')],
+GREEN_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Приморская', callback_data='StGreen1'),
+                                  InlineKeyboardButton('Василеостровская', callback_data='StGreen2')],
+                                 [InlineKeyboardButton('Гостиный двор', callback_data='StGreen3'),
+                                  InlineKeyboardButton('Маяковская', callback_data='StGreen4')],
+                                 [InlineKeyboardButton('Площадь А.Невского', callback_data='StGreen5'),
+                                  InlineKeyboardButton('Елизаровская', callback_data='StGreen6')],
+                                 [InlineKeyboardButton('Ломоносовская', callback_data='StGreen7'),
+                                  InlineKeyboardButton('Пролетарская', callback_data='StGreen8')],
+                                 [InlineKeyboardButton('Обухово', callback_data='StGreen9'),
+                                  InlineKeyboardButton('Рыбацкое', callback_data='StGreen10')],
                                  [InlineKeyboardButton('Назад', callback_data='ml')]
                                  ])
-
-ORANGE_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Спасская', callback_data='orangeSt1'),
-                                   InlineKeyboardButton('Достоевская', callback_data='orangeSt2')],
-                                  [InlineKeyboardButton('Лиговский проспект', callback_data='orangeSt3'),
-                                   InlineKeyboardButton('Новочеркасская', callback_data='orangeSt4')],
-                                  [InlineKeyboardButton('Ладожская', callback_data='orangeSt5'),
-                                   InlineKeyboardButton('Проспект Большевиков', callback_data='orangeSt6')],
-                                  [InlineKeyboardButton('Улица Дыбенко', callback_data='orangeSt7')],
+ORANGE_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Спасская', callback_data='StOrange1'),
+                                   InlineKeyboardButton('Достоевская', callback_data='StOrange2')],
+                                  [InlineKeyboardButton('Лиговский проспект', callback_data='StOrange3'),
+				[InlineKeyboardButton('Площадь А.Невского', callback_data='StOrange4'),
+                                   InlineKeyboardButton('Новочеркасская', callback_data='StOrange5')],
+                                  [InlineKeyboardButton('Ладожская', callback_data='StOrange6'),
+                                   InlineKeyboardButton('Проспект Большевиков', callback_data='StOrange7')],
+                                  [InlineKeyboardButton('Улица Дыбенко', callback_data='StOrange8')],
                                   [InlineKeyboardButton('Назад', callback_data='ml')]
                                   ])
-
-VIOLET_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Комендантский проспект', callback_data='violetSt1'),
-                                   InlineKeyboardButton('Старая Деревня', callback_data='violetSt2')],
-                                  [InlineKeyboardButton('Крестовский остров', callback_data='violetSt3'),
-                                   InlineKeyboardButton('Чкаловская', callback_data='violetSt4')],
-                                  [InlineKeyboardButton('Спортивная', callback_data='violetSt5'),
-                                   InlineKeyboardButton('Адмиралтейская', callback_data='violetSt6')],
-                                  [InlineKeyboardButton('Садовая', callback_data='violetSt7'),
-                                   InlineKeyboardButton('Звенигородская', callback_data='violetSt8')],
-                                  [InlineKeyboardButton('Обводный канал', callback_data='violetSt9'),
-                                   InlineKeyboardButton('Волковская', callback_data='violetSt10')],
-                                  [InlineKeyboardButton('Бухарестская', callback_data='violetSt11'),
-                                   InlineKeyboardButton('Международная', callback_data='violetSt12')],
+VIOLET_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Комендантский проспект', callback_data='StViolet1'),
+                                   InlineKeyboardButton('Старая Деревня', callback_data='StViolet2')],
+                                  [InlineKeyboardButton('Крестовский остров', callback_data='StViolet3'),
+                                   InlineKeyboardButton('Чкаловская', callback_data='StViolet4')],
+                                  [InlineKeyboardButton('Спортивная', callback_data='StViolet5'),
+                                   InlineKeyboardButton('Адмиралтейская', callback_data='StViolet6')],
+                                  [InlineKeyboardButton('Садовая', callback_data='StViolet7'),
+                                   InlineKeyboardButton('Звенигородская', callback_data='StViolet8')],
+                                  [InlineKeyboardButton('Обводный канал', callback_data='StViolet9'),
+                                   InlineKeyboardButton('Волковская', callback_data='StViolet10')],
+                                  [InlineKeyboardButton('Бухарестская', callback_data='StViolet11'),
+                                   InlineKeyboardButton('Международная', callback_data='StViolet12')],
                                   [InlineKeyboardButton('Назад', callback_data='ml')]
                                   ])
-
-RADIUS_KB = InlineKeyboardMarkup([[InlineKeyboardButton('500 метров', callback_data='500'),
+RADIUS_KB = InlineKeyboardMarkup ([[InlineKeyboardButton('500 метров', callback_data='500'),
                                    InlineKeyboardButton('700 метров', callback_data='700')],
-                                  [InlineKeyboardButton('1000 метров', callback_data='1000')],
-                                  [InlineKeyboardButton('Назад', callback_data='back_to_main')]
-                                  ])
+                                   [InlineKeyboardButton('1000 метров', callback_data='1000')],
+                                   [InlineKeyboardButton('Назад', callback_data='back_to_main')]
+                                   ])
+
