@@ -7,7 +7,8 @@ client = Client(key=config.API_KEY)
 
 
 def find_places(user_location, user_radius):
-    location = (user_location['latitude'], user_location['longitude'])
+    if type(user_location) == dict:
+        location = (user_location['latitude'], user_location['longitude'])
     result = places.places_nearby(client, location=location, radius=user_radius, type='bar') #keyword='cruise')
     #opening_hours = result['opening hours']
     #open_now = opening_hours['open now']
