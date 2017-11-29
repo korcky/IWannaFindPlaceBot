@@ -16,9 +16,9 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 TEXT = """
 *{}.* `{}`
-*Rating:* `{}`
-*Address:* `{}`
-*Opening hours:* `{}`
+*Рейтинг:* `{}`
+*Адрес:* `{}`
+*Часы работы:* `{}`
 """
 
 
