@@ -1,3 +1,6 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from telegram import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
@@ -11,19 +14,19 @@ REMOVE_KB = ReplyKeyboardRemove()
 START_KB = ReplyKeyboardMarkup([[KeyboardButton('/start')]],
                                resize_keyboard=True)
 
-NEXT_KB = ReplyKeyboardMarkup([[KeyboardButton('Следующий результат')]],
+NEXT_KB = ReplyKeyboardMarkup([[KeyboardButton('Показать еще...')]],
                               resize_keyboard=True)
 
 REQUEST_LOCATION_KB = ReplyKeyboardMarkup([[KeyboardButton('Я здесь', request_location=True)]],
                                           resize_keyboard=True)
 
 PLACE_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Бар', callback_data='bar'),
-                                  InlineKeyboardButton('Рестаран', callback_data='restaurant')]
+                                  InlineKeyboardButton('Ресторан', callback_data='restaurant')]
                                  ])
 
-MAIN_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Геолокация', callback_data='geo'),
-                                 InlineKeyboardButton('Станция метро', callback_data='ml')]
-                                ])
+TYPE_SEARCH_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Геолокация', callback_data='geo'),
+                                        InlineKeyboardButton('Станция метро', callback_data='ml')]
+                                       ])
 
 GEO_KB = InlineKeyboardMarkup([[InlineKeyboardButton('Назад', callback_data='back_to_main')]])
 
