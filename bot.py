@@ -1,6 +1,3 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import logging
 
 from telegram import Location
@@ -31,18 +28,17 @@ def place_wrapper(index, place):
 def start(bot, update, chat_data):
     chat_data.clear()
     update.message.reply_text('Здравствуйте', reply_markup=keyboards.REMOVE_KB)
-#    update.message.reply_text('Выберите тип места:', reply_markup=keyboards.PLACE_KB)
-    update.message.reply_text('Выберите способ поиска:', reply_markup=keyboards.TYPE_SEARCH_KB)
+    update.message.reply_text('Выберите тип места:', reply_markup=keyboards.PLACE_KB)
 
 
-#def place_type(bot, update, chat_data):
-#    query = update.callback_query
-#    chat_data['type'] = query.data
+def place_type(bot, update, chat_data):
+    query = update.callback_query
+    chat_data['type'] = query.data
 
-#    bot.edit_message_text(text='Выберите способ поиска:',
-#                          reply_markup=keyboards.TYPE_SEARCH_KB,
-#                          chat_id=query.message.chat_id,
-#                          message_id=query.message.message_id)
+    bot.edit_message_text(text='Выберите способ поиска:',
+                          reply_markup=keyboards.TYPE_SEARCH_KB,
+                          chat_id=query.message.chat_id,
+                          message_id=query.message.message_id)
 
 
 def geolocation(bot, update):
@@ -108,14 +104,14 @@ def set_radius(bot, update, chat_data):
         bot.send_message(query.message.chat_id, text='Где вы?',
                          reply_markup=keyboards.REQUEST_LOCATION_KB)
     else:
-        chat_data['nearest_places'] = find_places(chat_data.pop('location'), chat_data['radius'], 'bar') #chat_data['type'])
+        chat_data['nearest_places'] = find_places(chat_data.pop('location'), chat_data['radius'], chat_data['type'])
         chat_data['index'] = 0
         send_place(bot, update, chat_data, query)
 
 
 def location_handler(bot, update, chat_data):
     location = update.message.location
-    chat_data['nearest_places'] = find_places(location, chat_data['radius'], 'bar') #chat_data['type'])
+    chat_data['nearest_places'] = find_places(location, chat_data['radius'], chat_data['type'])
     chat_data['index'] = 0
     send_place(bot, update, chat_data)
 
@@ -158,12 +154,12 @@ if __name__ == '__main__':
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(CommandHandler('start', start, pass_chat_data=True))
-#    dispatcher.add_handler(CallbackQueryHandler(place_type, pattern='[(bar)(restaurant)]', pass_chat_data=True))
+    dispatcher.add_handler(CallbackQueryHandler(place_type, pattern='(bar)|(restaurant)', pass_chat_data=True))
     dispatcher.add_handler(CallbackQueryHandler(geolocation, pattern='geo'))
     dispatcher.add_handler(CallbackQueryHandler(metro_lines, pattern='ml'))
     dispatcher.add_handler(CallbackQueryHandler(back_to_main, pattern='back_to_main'))
-    dispatcher.add_handler(CallbackQueryHandler(which_station, pattern='[(red)(blue)(green)(orange)(violet)]'))
-    dispatcher.add_handler(CallbackQueryHandler(set_radius, pattern='[(500)(700)(1000)]', pass_chat_data=True))
+    dispatcher.add_handler(CallbackQueryHandler(which_station, pattern='(red)|(blue)|(green)|(orange)|(violet)'))
+    dispatcher.add_handler(CallbackQueryHandler(set_radius, pattern='(500)|(700)|(1000)', pass_chat_data=True))
     dispatcher.add_handler(CallbackQueryHandler(choose_station, pattern='St', pass_chat_data=True))
     dispatcher.add_handler(MessageHandler(Filters.location, location_handler, pass_chat_data=True))
     dispatcher.add_handler(RegexHandler('^(Показать еще...)$', send_place, pass_chat_data=True))

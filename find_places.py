@@ -1,6 +1,3 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
-
 from googlemaps import places, Client
 from telegram import Location
 
